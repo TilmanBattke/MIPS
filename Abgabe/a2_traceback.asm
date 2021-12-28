@@ -217,23 +217,53 @@ print_maze_loop_end:
 .text
 
 trace_back:
-	#TODO: Store registries s0 s1 s2 s7
+	#TODO: Store registries s0 s1 s2 s3 s4 s5 s7
+	addi $sp, $sp, -32
+	sw $s0, 0($sp)
+	sw $s1, 4($sp)
+	sw $s2, 8($sp)
+	sw $s3, 12($sp)
+	sw $s4, 16($sp)
+	sw $s5, 20($sp)
+	sw $s7, 24($sp)
+	sw $ra, 28($sp)
 	move $s1, $a1
-	move $s0, $a0				#$s1 enthaelt die aktuellen Position, $s0 die Adresse des Maze-Arrays
-	add $s2, $s1, $s0			#$s2 enthaelt die Adresse der aktuellen Position
-	li $s7, 254				#$s7 enthealt den Weg wert
-	lbu $t1, ($s2)
-	move $v0, $t1				#der Weg ist so lang wie der Wert in Destination also wird er in $v0 gespeichert
-	sb $s7, ($s2) 				#Destination gehör in jedem Fall zum Weg
+	move $s0, $a0					#$s1 enthaelt die aktuellen Position, $s0 die Adresse des Maze-Arrays
+	add $s2, $s1, $s0				#$s2 enthaelt die Adresse der aktuellen Position
+	li $s7, 254					#$s7 enthealt den Weg wert
+	lbu $t1, ($s2)					#$t1 enthaelt den aktuellen Abstand zum Start
+	move $s3, $t1					#die laenge des weges wird in s3 gespeichert. Abstand zum Start im Ziel = laenge des Weges
 	
 trace_back_loop:
-	beq $a1, 1, end				#Bedingung zum beenden der Schleife. nur der Start hat den Wert 1
-	li $t2, 0				#iterator für das Direction Argument in finde_kleinsten_Nachbarn_Loop
+	lbu $s5, ($s2)					#$s5 enthaelt den aktuellen Abstand zum Start
+	sb $s7, ($s2) 					#Destination gehör in jedem Fall zum Weg
+	beq $s5, 1, end					#Bedingung zum beenden der Schleife. nur der Start hat den Wert 1
+	li $s4, 0					#iterator für das Direction Argument in finde_kleinsten_Nachbarn_Loop
 
 finde_kleinsten_Nachbarn_Loop:
+	move $a0, $s1					#argumente fuer neigbor laden
+	move $a1, $s4
+	jal neighbor				
+	add $t0, $v0, $s0				#wert vom Nachbarn in $t1 laden
+	lbu $t1, ($t0)
+	addi $s4, $s4, 1
+	bge $t1, $s5, finde_kleinsten_Nachbarn_Loop	#falls der Wert des aktuellen Nachbarns kleiner als der des Aktuellen, wurde der Weg gefunden
+	move $s1, $v0					#setzen des neuen Aktuellen Indexses
+	move $s2, $t0					#setzen der Aktuellen Adresse
+	j trace_back_loop
 	
 end:
 	#TODO: Restore Registries s0 s1 s2 s7
+	lw $s0, 0($sp)
+	lw $s1, 4($sp)
+	lw $s2, 8($sp)
+	lw $s3, 12($sp)
+	lw $s4, 16($sp)
+	lw $s5, 20($sp)
+	lw $s7, 24($sp)
+	lw $ra, 28($sp)
+	addi $sp, $sp, 32
+
 	jr $ra
 	
 	
