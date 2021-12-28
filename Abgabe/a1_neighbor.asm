@@ -77,28 +77,28 @@ neighbor:
 	
 	#Ermitteln der Position
 directionZero:
-	addi $v0, $a0, -8		#abziehen von 8 ist gleich eine Reihe nach oben gehen
-	blt $v0, 0, keinePosition	#gucken ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth
+	addi $v0, $a0, -8		#abziehen von 8 entspricht dem Feld oberhalb
+	blt $v0, 0, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth.
 	jr $ra
 	
 directionOne:
-	addi $v0, $a0, -1		#abziehen von 1 ist gleich einer Spalte nach links gehen
-	blt $v0, 0, keinePosition	#gucken ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth
-	div $t0, $a0, 8			#Integer division durch 8 ergibt die Reihe der Postion
-	div $t1, $v0, 8			#$t0 haelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
+	addi $v0, $a0, -1		#abziehen von 1 entspricht dem Feld links
+	blt $v0, 0, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth
+	div $t0, $a0, 8			#Integer Division durch 8 ergibt die Reihe der Postion
+	div $t1, $v0, 8			#$t0 enthaelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
 	bne $t0, $t1, keinePosition	#wenn die Reihen gleich sind, sind sie Nachbarn
 	jr $ra
 
 directionTwo:
-	addi $v0, $a0, 8		#addieren von 8 ist gleich einer Reihe nach unten gehen
-	bgt $v0, 63, keinePosition	#gucken ob das Ergebnis out-of-bounce ist. Zahlen groeßer 63 sind nicht im Labyrinth
+	addi $v0, $a0, 8		#addieren von 8 entspricht dem Feld unterhalb
+	bgt $v0, 63, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen groesser 63 sind nicht im Labyrinth
 	jr $ra
 	
 directionThree:
-	addi $v0, $a0, 1		#addieren von 1 ist gleich einer Spalte nach rechts gehen
-	bgt $v0, 63, keinePosition	#gucken ob das Ergebnis out-of-bounce ist. Zahlen groeßer 63 sind nicht im Labyrinth
-	div $t0, $a0, 8			#Integer division durch 8 ergibt die Reihe der Postion
-	div $t1, $v0, 8			#$t0 haelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
+	addi $v0, $a0, 1		#addieren von 1 entspricht dem Feld rechts
+	bgt $v0, 63, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen groesser 63 sind nicht im Labyrinth
+	div $t0, $a0, 8			#Integer Division durch 8 ergibt die Reihe der Postion
+	div $t1, $v0, 8			#$t0 enthaelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
 	bne $t0, $t1, keinePosition	#wenn die Reihen gleich sind, sind sie Nachbarn
 	jr $ra
 	

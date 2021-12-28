@@ -230,34 +230,34 @@ trace_back:
 	move $s1, $a1
 	move $s0, $a0					#$s1 enthaelt die aktuellen Position, $s0 die Adresse des Maze-Arrays
 	add $s2, $s1, $s0				#$s2 enthaelt die Adresse der aktuellen Position
-	li $s7, 254					#$s7 enthealt den Weg wert
+	li $s7, 254					#$s7 enthealt den Wegwert (254)
 	lbu $t1, ($s2)					#$t1 enthaelt den aktuellen Abstand zum Start
-	move $s3, $t1					#die laenge des weges wird in $s3 gespeichert. Abstand zum Start im Ziel = laenge des Weges
+	move $s3, $t1					#Die Laenge des Weges wird in $s3 gespeichert. Der Abstand zum Start im Ziel ist die Laenge des Weges
 	
 trace_back_loop:
 	lbu $s5, ($s2)					#$s5 enthaelt den aktuellen Abstand zum Start
-	sb $s7, ($s2) 					#Destination gehör in jedem Fall zum Weg
-	beq $s5, 1, end					#Bedingung zum beenden der Schleife. nur der Start hat den Wert 1
-	li $s4, 0					#iterator für das Direction Argument in finde_kleinsten_Nachbarn_Loop
+	sb $s7, ($s2) 					#Ziel (Destination) gehoert in jedem Fall zum Weg
+	beq $s5, 1, end					#Bedingung zum Beenden der Schleife, nur der Start hat den Wert 1
+	li $s4, 0					#Iterator fuer das Direction Argument von neighbor in finde_kleinsten_Nachbarn_Loop
 
 finde_kleinsten_Nachbarn_Loop:
-	move $a0, $s1					#argumente fuer neigbor laden
+	move $a0, $s1					#Argumente fuer neighbor laden
 	move $a1, $s4
 	jal neighbor
-	bltz $v0, kein_Nachbar 				#falls die Ausgabe von neighbor kleiner 0 ist gab es einen Fehler und es wird zum ende der Schleife gesprungen 
+	bltz $v0, kein_Nachbar 				#Falls die Ausgabe von neighbor kleiner 0 ist, gab es einen Fehler und es wird zum Ende der Schleife gesprungen. 
 	add $t0, $v0, $s0				
-	lbu $t1, ($t0)					#wert vom Nachbarn in $t1 laden
+	lbu $t1, ($t0)					#Wert vom Nachbarn in $t1 laden
 	
 kein_Nachbar:	
-	addi $s4, $s4, 1				#Itterator um 1 erhoehen
-	bge $t1, $s5, finde_kleinsten_Nachbarn_Loop	#falls der Wert des aktuellen Nachbarns kleiner als der des Aktuellen, wurde der Weg gefunden
-	move $s1, $v0					#setzen des neuen Aktuellen Indexses
-	move $s2, $t0					#setzen der Aktuellen Adresse
+	addi $s4, $s4, 1				#Iterator um 1 erhoehen
+	bge $t1, $s5, finde_kleinsten_Nachbarn_Loop	#Falls der Wert des aktuellen Nachbarn kleiner als der Wert der aktuellen Position ist, wurde das naechster Feld gefunden
+	move $s1, $v0					#setzen des neuen aktuellen Indexes
+	move $s2, $t0					#setzen der aktuellen Adresse
 	j trace_back_loop
 	
 end:
 	#Restore Registries s0 s1 s2 s3 s4 s5 s7 ra
-	move $v0, $s3
+	move $v0, $s3					#Laenge des Weges aus $s3 in $v0 speichern
 	lw $s0, 0($sp)
 	lw $s1, 4($sp)
 	lw $s2, 8($sp)
@@ -266,7 +266,7 @@ end:
 	lw $s5, 20($sp)
 	lw $s7, 24($sp)
 	lw $ra, 28($sp)
-	addi $sp, $sp, 32				#Stackpointer zurueck setzten
+	addi $sp, $sp, 32				#Stackpointer zurueck setzen
 
 	jr $ra
 	
