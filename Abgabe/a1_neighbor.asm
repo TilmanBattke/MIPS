@@ -78,28 +78,29 @@ neighbor:
 	#Ermitteln der Position
 directionZero:
 	addi $v0, $a0, -8		#abziehen von 8 entspricht dem Feld oberhalb
-	blt $v0, 0, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth.
-	jr $ra
+	j ueberpruefePosition
 	
 directionOne:
 	addi $v0, $a0, -1		#abziehen von 1 entspricht dem Feld links
-	blt $v0, 0, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth
-	div $t0, $a0, 8			#Integer Division durch 8 ergibt die Reihe der Postion
-	div $t1, $v0, 8			#$t0 enthaelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
-	bne $t0, $t1, keinePosition	#wenn die Reihen gleich sind, sind sie Nachbarn
-	jr $ra
+	j ueberpruefeSelbeReihe
 
 directionTwo:
 	addi $v0, $a0, 8		#addieren von 8 entspricht dem Feld unterhalb
-	bgt $v0, 63, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen groesser 63 sind nicht im Labyrinth
-	jr $ra
+	j ueberpruefePosition
 	
 directionThree:
 	addi $v0, $a0, 1		#addieren von 1 entspricht dem Feld rechts
-	bgt $v0, 63, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen groesser 63 sind nicht im Labyrinth
-	div $t0, $a0, 8			#Integer Division durch 8 ergibt die Reihe der Postion
-	div $t1, $v0, 8			#$t0 enthaelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
+	j ueberpruefeSelbeReihe
+	
+ueberpruefeSelbeReihe:
+	srl $t0, $a0, 3			#verschieben der bits um 3 nach rechts ergibt die Reihe der Postion
+	srl $t1, $v0, 3			#$t0 enthaelt die Reihe der gegebenen Position und $t1 die Reihe der gefundenen Position
 	bne $t0, $t1, keinePosition	#wenn die Reihen gleich sind, sind sie Nachbarn
+	j ueberpruefePosition
+
+ueberpruefePosition:
+	blt $v0, 0, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen kleiner 0 sind nicht im Labyrinth
+	bgt $v0, 63, keinePosition	#pruefen, ob das Ergebnis out-of-bounce ist. Zahlen groesser 63 sind nicht im Labyrinth
 	jr $ra
 	
 	#Position ist nicht auf dem Feld
